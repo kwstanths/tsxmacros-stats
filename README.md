@@ -15,7 +15,8 @@ b)  Transaction area example:
     transaction_start(&your_own_fallback_lock, number_of_transaction_tries);
       //Transactional area
     transaction_end(&your_own_fallback_lock);
-    //fallback_lock is very important as the transactions may abort repeatedly and the program whould seem to never end
+    //fallback_lock is very important as the transactions may abort repeatedly and the program whould seem to never 
+    end
 
 
 c)  Statistics gathering example:
