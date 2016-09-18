@@ -23,36 +23,30 @@ class ReportStat{
 			total_transactions_completed=0;
 		};
 		int abort_conflict, abort_capacity, abort_retry, abort_explicit, abort_debug, abort_nested, total_aborts, total_transactions_completed;
-		std::mutex lock;
-		std::mutex lock2;
 
 	public:
 		ReportStat(ReportStat const&) = delete;
 		void operator=(ReportStat const&) = delete;
 
 		void report_status(int status){
-			lock.lock();
-			total_aborts++;
+			__sync_fetch_and_add(&total_aborts,1);
 			if(status & _XABORT_CONFLICT){
-				abort_conflict++;
+				__sync_fetch_and_add(&abort_conflict,1);
 			}else if (status & _XABORT_CAPACITY){
-				abort_capacity++;
+				__sync_fetch_and_add(&abort_capacity,1);
 			}else if (status & _XABORT_RETRY){
-				abort_retry++;
+				__sync_fetch_and_add(&abort_retry,1);
 			}else if (status & _XABORT_EXPLICIT){
-				abort_explicit++;
+				__sync_fetch_and_add(&abort_explicit,1);
 			}else if (status & _XABORT_DEBUG){
-				abort_debug++;
+				__sync_fetch_and_add(&abort_debug,1);
 			}else if (status & _XABORT_NESTED){
-				abort_nested++;
+				__sync_fetch_and_add(&abort_nested,1);
 			}
-			lock.unlock();
 		}
 
 		void report_transaction(){
-			lock2.lock();
-			total_transactions_completed++;
-			lock2.unlock();
+			__sync_fetch_and_add(&total_transactions_completed,1);
 		}
 
 		int getConflictAborts(){
