@@ -4,6 +4,7 @@
 
 #include "ReportStat.h"
 #include <pthread.h>
+#include <unistd.h>
 
 static inline int transaction_start(pthread_spinlock_t * fallback_lock, int number_of_tries){
 
@@ -20,10 +21,12 @@ static inline int transaction_start(pthread_spinlock_t * fallback_lock, int numb
 			if (*fallback_lock == 0) __transaction_abort(0xff);		
 			return number_of_tries - aborts;	
 		}
-
+		__transaction_abort(0xff);
 #ifdef RTM_GATHER_STATS
 		stats.report_status(status);
 #endif
+		if (status & _XABORT_CONFLICT) usleep(50);
+		
 		if (aborts++ == number_of_tries){
 			pthread_spin_lock(fallback_lock);
 			return number_of_tries - aborts;
@@ -33,7 +36,7 @@ static inline int transaction_start(pthread_spinlock_t * fallback_lock, int numb
 }
 
 static inline int transaction_end(pthread_spinlock_t * fallback_lock){
-	
+
 #ifdef RTM_GATHER_STATS
 	ReportStat& stats = ReportStat::getInstance();
 #endif
@@ -47,6 +50,5 @@ static inline int transaction_end(pthread_spinlock_t * fallback_lock){
 		pthread_spin_unlock(fallback_lock);
 		return 1;
 	}
-	
 }
 
