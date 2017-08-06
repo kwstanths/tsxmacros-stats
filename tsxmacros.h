@@ -25,7 +25,7 @@ static inline int transaction_start(pthread_spinlock_t * fallback_lock, int numb
 #ifdef RTM_GATHER_STATS
 		stats.report_status(status);
 #endif
-		if (status & _XABORT_CONFLICT) usleep(50);
+		if (status & _XABORT_CONFLICT) usleep(10);
 		
 		if (aborts++ == number_of_tries){
 			pthread_spin_lock(fallback_lock);
@@ -48,6 +48,9 @@ static inline int transaction_end(pthread_spinlock_t * fallback_lock){
 		return 0;
 	}else{
 		pthread_spin_unlock(fallback_lock);
+#ifdef RTM_GATHER_STATS
+		stats.report_lock();
+#endif
 		return 1;
 	}
 }
