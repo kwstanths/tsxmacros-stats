@@ -5,7 +5,7 @@ Usefull macros for quick defining of transactional regions and stats gathering
 
 a)  Flags explanation:
 
-    INCLUDE_RTMLIB: Include your own rtm library. In some systems you dont have to cause its in the compiler's path
+    INCLUDE_RTMLIB: Include your own rtm library. In some systems you dont have to, because it's in the compiler's path
     RTM_GATHER_STATS: Gather stats for your transactions.
 
 
